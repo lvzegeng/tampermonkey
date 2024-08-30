@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.1
+// @version      0.0.2
 // @description  简短而有意义的描述
 // @author       LZG
 // @match        https://lanhuapp.com/*
