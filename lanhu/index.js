@@ -2,7 +2,7 @@
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
 // @version      0.0.2
-// @description  简短而有意义的描述
+// @description  支持 Css、Less、Sass 变量
 // @author       LZG
 // @match        https://lanhuapp.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
@@ -32,7 +32,16 @@ $borderRadius: 20px;
       .split(";")
       .slice(0, -1)
       .map((item) => item.split(":"))
-      .map((item) => [item[1].trim(), item[0].trim()]);
+      .map((item) => {
+        const firstValue = item[1].trim();
+        let secondValue = item[0].trim();
+
+        if (secondValue.startsWith("--")) {
+          secondValue = `calc(${secondValue})`;
+        }
+
+        return [firstValue, secondValue];
+      });
 
   (function init() {
     data.forEach((item, index) => {
