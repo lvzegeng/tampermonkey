@@ -2,7 +2,7 @@
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
 // @version      0.0.3
-// @description  支持 Css、Less、Sass 变量，不区分大小写
+// @description  支持 Css、Less、Sass 变量；不区分大小写
 // @author       LZG
 // @match        https://lanhuapp.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
@@ -54,7 +54,7 @@ $borderRadius: 20px; /*注释*/
       navigator.clipboard.writeText(clipText);
     };
 
-    // 将 variable 转换为 [['#FA5944', '$colorPrimary']] 这样的结构
+    // 将 variable 转换为 [['#FA5944', '$colorPrimary'], ['#FA5944', 'calc(--colorPrimary)']] 这样的结构
     const calcVariableArray = (variable) => {
       // 使用正则表达式去掉注释
       const cleanedCode = variable
