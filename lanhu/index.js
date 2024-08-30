@@ -17,31 +17,16 @@
     {
       name: "a",
       variable: `
-$colorPrimary: #FA5944;
-$borderRadius: 20px;
+// 注释
+$colorPrimary: #FA5944; //注释
+/* 注释 */
+$borderRadius: 20px; /*注释*/
   `,
     },
   ];
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
-
-  // 将 variable 转换为 [['#FA5944', '$colorPrimary']] 这样的结构
-  const calcVariableArray = (variable) =>
-    variable
-      .split(";")
-      .slice(0, -1)
-      .map((item) => item.split(":"))
-      .map((item) => {
-        const firstValue = item[1].trim();
-        let secondValue = item[0].trim();
-
-        if (secondValue.startsWith("--")) {
-          secondValue = `calc(${secondValue})`;
-        }
-
-        return [firstValue, secondValue];
-      });
 
   (function init() {
     data.forEach((item, index) => {
@@ -67,6 +52,29 @@ $borderRadius: 20px;
       });
 
       navigator.clipboard.writeText(clipText);
+    };
+
+    // 将 variable 转换为 [['#FA5944', '$colorPrimary']] 这样的结构
+    const calcVariableArray = (variable) => {
+      // 使用正则表达式去掉注释
+      const cleanedCode = variable
+        .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
+        .trim();
+
+      return cleanedCode
+        .split(";")
+        .slice(0, -1)
+        .map((item) => item.split(":"))
+        .map((item) => {
+          const firstValue = item[1].trim();
+          let secondValue = item[0].trim();
+
+          if (secondValue.startsWith("--")) {
+            secondValue = `calc(${secondValue})`;
+          }
+
+          return [firstValue, secondValue];
+        });
     };
   })();
 })();
