@@ -26,7 +26,7 @@ $borderRadius: 20px;
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
 
-  // 将 variable 转换为 [['#FA5944', '$colorPrimary']] 这样的结构。如果要修改替换值只需要修改这里的 '$colorPrimary'。不区分 '#FA5944' 值的大小写进行替换
+  // 将 variable 转换为 [['#FA5944', '$colorPrimary']] 这样的结构。如果要修改替换值只需要修改这里返回的 '$colorPrimary'。不区分 '#FA5944' 值的大小写进行替换
   const calcVariableArray = (variable) =>
     variable
       .split(";")
@@ -49,8 +49,8 @@ $borderRadius: 20px;
 
     const handleClick = async (item) => {
       document.querySelector(copyBtnSelector).click();
-      let clipText = await navigator.clipboard.readText();
 
+      let clipText = await navigator.clipboard.readText();
       const variableArray = calcVariableArray(item.variable);
 
       variableArray.forEach((i) => {
