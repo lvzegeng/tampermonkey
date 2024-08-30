@@ -54,7 +54,7 @@ $borderRadius: 20px;
       const variableArray = calcVariableArray(item.variable);
 
       variableArray.forEach((i) => {
-        clipText = clipText.replaceAll(new RegExp(i[0], 'ig'), i[1]);
+        clipText = clipText.replaceAll(new RegExp(i[0], "ig"), i[1]);
       });
 
       navigator.clipboard.writeText(clipText);
