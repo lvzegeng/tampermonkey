@@ -19,6 +19,7 @@
       variable: `
 // 注释
 $colorPrimary: #FA5944; //注释
+$colorPrimary2: #FA5944; 
 /* 注释 */
 $borderRadius: 20px; /*注释*/
   `,
