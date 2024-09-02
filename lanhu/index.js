@@ -1,25 +1,27 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.3
+// @version      0.0.4
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
-// @grant        none
+// @grant        GM_registerMenuCommand
+// @grant        GM_setValue
+// @grant        GM_getValue
 // ==/UserScript==
 
 (function () {
   "use strict";
 
   // 配置 CSS 变量数据
-  const data = [
+  const defaultData = [
     {
-      name: "a",
+      name: "主题a",
       variable: `
 // 注释
 $colorPrimary: #FA5944; //注释
-$colorPrimary2: #FA5944; 
+$colorPrimary2: #FA5944;
 /* 注释 */
 $borderRadius: 20px; /*注释*/
   `,
@@ -30,6 +32,18 @@ $borderRadius: 20px; /*注释*/
   const copyBtnSelector = "#copy_code";
 
   (function init() {
+    const configKey = "userInput";
+    const data = GM_getValue(configKey, defaultData);
+
+    GM_registerMenuCommand("修改 CSS 变量", (event) => {
+      const userInput = prompt("请输入你的配置文本：", JSON.stringify(data));
+
+      if (userInput) {
+        GM_setValue(configKey, JSON.parse(userInput));
+        window.location.reload();
+      }
+    });
+
     data.forEach((item, index) => {
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
@@ -67,7 +81,7 @@ $borderRadius: 20px; /*注释*/
         .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
         .trim();
 
-      const tempResult = {}
+      const tempResult = {};
 
       cleanedCode
         .split(";")
@@ -81,17 +95,20 @@ $borderRadius: 20px; /*注释*/
             secondValue = `calc(${secondValue})`;
           }
 
-          tempResult[firstValue] ??= []
+          tempResult[firstValue] ??= [];
 
-          tempResult[firstValue].push(secondValue)
+          tempResult[firstValue].push(secondValue);
         });
 
-      const result = {}
-      Object.entries(tempResult).map(([key, value])=> {
-        result[key] = value.length === 1? value[0]: `${value[0]} /* ${value.slice(1).join(', ')} */`
-      })
+      const result = {};
+      Object.entries(tempResult).map(([key, value]) => {
+        result[key] =
+          value.length === 1
+            ? value[0]
+            : `${value[0]} /* ${value.slice(1).join(", ")} */`;
+      });
 
-      return result
+      return result;
     };
   })();
 })();
