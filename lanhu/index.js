@@ -9,6 +9,8 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_xmlhttpRequest
+// @connect      gitlab.autosaver88.com
 // ==/UserScript==
 
 (function () {
@@ -26,12 +28,18 @@ $colorPrimary2: #FA5944;
 $borderRadius: 20px; /*注释*/
   `,
     },
+    {
+      name: "主题b",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/two/src/assets/scss/variables.scss",
+    },
   ];
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
 
   (function init() {
+    const cacheMap = new Map();
+
     const configKey = "userInput";
     const data = GM_getValue(configKey, defaultData);
 
@@ -47,8 +55,8 @@ $borderRadius: 20px; /*注释*/
     data.forEach((item, index) => {
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
-      buttonEle.style.cssText = `z-index: 9999; background: #FA5944; padding: 5px 10px; position: absolute; bottom: 100px; right: ${
-        50 * index + 10
+      buttonEle.style.cssText = `z-index: 9999; background: #FA5944; padding: 5px 10px; position: absolute; right: 10px; bottom: ${
+        40 * index + 10
       }px;`;
       buttonEle.addEventListener("click", () => {
         handleClick(item);
@@ -60,7 +68,7 @@ $borderRadius: 20px; /*注释*/
       document.querySelector(copyBtnSelector).click();
 
       let clipText = await navigator.clipboard.readText();
-      const variableObject = calcVariableObject(item.variable);
+      const variableObject = calcVariableObject(item);
 
       Object.entries(variableObject).forEach(([key, value]) => {
         clipText = clipText.replaceAll(new RegExp(key, "ig"), value);
@@ -75,7 +83,17 @@ $borderRadius: 20px; /*注释*/
     //     "#fa5944": "calc(--colorPrimary) /* calc(--colorPrimary2), calc(--colorPrimary23) */"
     //     "20px": "$borderRadius"
     // }
-    const calcVariableObject = (variable) => {
+    const calcVariableObject = async (item) => {
+      if (cacheMap.get(item)) {
+        return cacheMap.get(item);
+      }
+
+      let variable = item.variable;
+      if (item.url) {
+        const response = await GM.xmlHttpRequest({ url: item.url })
+        variable = response.responseText;
+      }
+
       // 使用正则表达式去掉注释
       const cleanedCode = variable
         .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
@@ -108,6 +126,7 @@ $borderRadius: 20px; /*注释*/
             : `${value[0]} /* ${value.slice(1).join(", ")} */`;
       });
 
+      cacheMap.set(item, result);
       return result;
     };
   })();
