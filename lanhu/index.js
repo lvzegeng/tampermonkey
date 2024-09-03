@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.4
+// @version      0.0.5
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/*
@@ -19,18 +19,20 @@
   // 配置 CSS 变量数据
   const defaultData = [
     {
-      name: "主题a",
-      variable: `
-// 注释
-$colorPrimary: #FA5944; //注释
-$colorPrimary2: #FA5944;
-/* 注释 */
-$borderRadius: 20px; /*注释*/
-  `,
+      name: "主题 he-pc",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/two/src/assets/scss/variables.scss",
     },
     {
-      name: "主题b",
-      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/two/src/assets/scss/variables.scss",
+      name: "主题 he-m",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/hernest-m/src/assets/scss/variables.scss",
+    },
+    {
+      name: "主题 home-pc",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/home/src/assets/scss/variables.scss",
+    },
+    {
+      name: "主题 home-m",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/home-m/src/assets/scss/variables.scss",
     },
   ];
 
@@ -39,14 +41,6 @@ $borderRadius: 20px; /*注释*/
 
   (function init() {
     const cacheMap = new Map();
-    const colors = [
-      "rgb(244, 166, 159)",
-      "rgb(239, 203, 158)",
-      "rgb(86, 226, 222)",
-      "rgb(34, 247, 176)",
-      "rgb(192, 140, 234)",
-      "rgb(75, 190, 216)",
-    ];
 
     const configKey = "userInput";
     const data = GM_getValue(configKey, defaultData);
@@ -60,17 +54,26 @@ $borderRadius: 20px; /*注释*/
       }
     });
 
+    const colors = [
+      "rgb(244, 166, 159)",
+      "rgb(239, 203, 158)",
+      "rgb(86, 226, 222)",
+      "rgb(34, 247, 176)",
+      "rgb(192, 140, 234)",
+      "rgb(75, 190, 216)",
+    ];
+    const divEle = document.createElement('div');
+    divEle.style.cssText = `z-index: 9999; position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 10px;`;
     data.forEach((item, index) => {
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
-      buttonEle.style.cssText = `z-index: 9999; background: ${colors[index % colors.length]}; padding: 5px 10px; position: absolute; right: 10px; bottom: ${
-        40 * index + 10
-      }px;`;
+      buttonEle.style.cssText = `background: ${colors[index % colors.length]}; padding: 5px 10px;`;
       buttonEle.addEventListener("click", () => {
         handleClick(item);
       });
-      document.body.appendChild(buttonEle);
+      divEle.appendChild(buttonEle);
     });
+    document.body.appendChild(divEle);
 
     const handleClick = async (item) => {
       document.querySelector(copyBtnSelector).click();
