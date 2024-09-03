@@ -79,7 +79,7 @@
       document.querySelector(copyBtnSelector).click();
 
       let clipText = await navigator.clipboard.readText();
-      const variableObject = calcVariableObject(item);
+      const variableObject = await calcVariableObject(item);
 
       Object.entries(variableObject).forEach(([key, value]) => {
         clipText = clipText.replaceAll(new RegExp(key, "ig"), value);
