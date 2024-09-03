@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.5
+// @version      0.0.6
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/*
@@ -43,15 +43,31 @@
     const cacheMap = new Map();
 
     const configKey = "userInput";
-    const data = GM_getValue(configKey, defaultData);
+    const defaultDataStr = JSON.stringify(defaultData, null, 2);
+    const data = GM_getValue(configKey, defaultDataStr);
 
     GM_registerMenuCommand("修改 CSS 变量", (event) => {
-      const userInput = prompt("请输入你的配置文本：", JSON.stringify(data));
+      const modalEle = document.createElement("div");
+      modalEle.style.cssText =
+        "position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999; width: 600px; min-height: 350px; background: rgb(252, 252, 252); box-shadow: 0px 1px 2px -2px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.12), 0px 5px 12px 4px rgba(0, 0, 0, 0.09); padding: 10px;";
+      modalEle.innerHTML = `
+        <div>当前配置：</div>
+        <textarea id="input-config" rows="10" style="width: 100%; border: 1px solid" ></textarea>
+        <div>
+          <button id="reset-btn">重置</button>
+          <button id="save-btn">保存</button>
+        </div>
+  `;
+      document.body.appendChild(modalEle);
 
-      if (userInput) {
-        GM_setValue(configKey, JSON.parse(userInput));
+      modalEle.querySelector("#input-config").value = data;
+      modalEle.querySelector("#save-btn").addEventListener("click", () => {
+        GM_setValue(configKey, modalEle.querySelector("#input-config").value);
         window.location.reload();
-      }
+      });
+      modalEle.querySelector("#reset-btn").addEventListener("click", () => {
+        modalEle.querySelector("#input-config").value = defaultDataStr;
+      });
     });
 
     const colors = [
@@ -62,9 +78,9 @@
       "rgb(192, 140, 234)",
       "rgb(75, 190, 216)",
     ];
-    const divEle = document.createElement('div');
+    const divEle = document.createElement("div");
     divEle.style.cssText = `z-index: 9999; position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 10px;`;
-    data.forEach((item, index) => {
+    JSON.parse(data).forEach((item, index) => {
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
       buttonEle.style.cssText = `background: ${colors[index % colors.length]}; padding: 5px 10px;`;
@@ -76,6 +92,9 @@
     document.body.appendChild(divEle);
 
     const handleClick = async (item) => {
+      if (!document.querySelector(copyBtnSelector)) {
+        alert("请打开样式面板");
+      }
       document.querySelector(copyBtnSelector).click();
 
       let clipText = await navigator.clipboard.readText();
@@ -101,8 +120,14 @@
 
       let variable = item.variable;
       if (item.url) {
-        const response = await GM.xmlHttpRequest({ url: item.url });
-        variable = response.responseText;
+        try {
+          const response = await GM.xmlHttpRequest({ url: item.url });
+          variable = response.responseText;
+        } catch (err) {
+          console.error(err);
+          alert("请求主题文件异常");
+          return;
+        }
       }
 
       // 使用正则表达式去掉注释
