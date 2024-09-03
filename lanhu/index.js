@@ -39,6 +39,14 @@ $borderRadius: 20px; /*注释*/
 
   (function init() {
     const cacheMap = new Map();
+    const colors = [
+      "rgb(244, 166, 159)",
+      "rgb(239, 203, 158)",
+      "rgb(86, 226, 222)",
+      "rgb(34, 247, 176)",
+      "rgb(192, 140, 234)",
+      "rgb(75, 190, 216)",
+    ];
 
     const configKey = "userInput";
     const data = GM_getValue(configKey, defaultData);
@@ -55,7 +63,7 @@ $borderRadius: 20px; /*注释*/
     data.forEach((item, index) => {
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
-      buttonEle.style.cssText = `z-index: 9999; background: #FA5944; padding: 5px 10px; position: absolute; right: 10px; bottom: ${
+      buttonEle.style.cssText = `z-index: 9999; background: ${colors[index % colors.length]}; padding: 5px 10px; position: absolute; right: 10px; bottom: ${
         40 * index + 10
       }px;`;
       buttonEle.addEventListener("click", () => {
@@ -90,7 +98,7 @@ $borderRadius: 20px; /*注释*/
 
       let variable = item.variable;
       if (item.url) {
-        const response = await GM.xmlHttpRequest({ url: item.url })
+        const response = await GM.xmlHttpRequest({ url: item.url });
         variable = response.responseText;
       }
 
