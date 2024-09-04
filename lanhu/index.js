@@ -135,24 +135,40 @@
         .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
         .trim();
 
-      const tempResult = {};
-
-      cleanedCode
+      const splitArr = cleanedCode
         .split(";")
         .slice(0, -1)
-        .map((item) => item.split(":"))
-        .forEach((item) => {
-          const firstValue = item[1].trim().toLowerCase();
-          let secondValue = item[0].trim();
+        .map((item) => item.split(":").map((i) => i.trim()));
 
-          if (secondValue.startsWith("--")) {
-            secondValue = `calc(${secondValue})`;
-          }
+      // 将变量值为变量的替换为具体值，必须从后替换
+      let variableValueIndex = splitArr.findLastIndex((item) =>
+        item[1].startsWith("$"),
+      );
+      while (variableValueIndex !== -1) {
+        const variableIndex = splitArr.findIndex(
+          (item) => item[0] === splitArr[variableValueIndex][1],
+        );
+        if (variableIndex !== -1) {
+          splitArr[variableValueIndex][1] = splitArr[variableIndex][1];
+        }
+        variableValueIndex = splitArr.findLastIndex((item) =>
+          item[1].startsWith("$"),
+        );
+      }
 
-          tempResult[firstValue] ??= [];
+      const tempResult = {};
+      splitArr.forEach((item) => {
+        const firstValue = item[1].toLowerCase();
+        let secondValue = item[0];
 
-          tempResult[firstValue].push(secondValue);
-        });
+        if (secondValue.startsWith("--")) {
+          secondValue = `calc(${secondValue})`;
+        }
+
+        tempResult[firstValue] ??= [];
+
+        tempResult[firstValue].push(secondValue);
+      });
 
       const result = {};
       Object.entries(tempResult).map(([key, value]) => {
