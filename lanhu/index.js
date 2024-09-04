@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.6
+// @version      0.0.7
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/*
@@ -140,7 +140,7 @@
         .slice(0, -1)
         .map((item) => item.split(":").map((i) => i.trim()));
 
-      // 将变量值为变量的替换为具体值，必须从后替换
+      // 将变量值为变量的替换为具体值，因为会有循环赋值变量所以必须从后替换
       let variableValueIndex = splitArr.findLastIndex((item) =>
         item[1].startsWith("$"),
       );
