@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.7
+// @version      0.0.8
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/*
@@ -101,7 +101,11 @@
       const variableObject = await calcVariableObject(item);
 
       Object.entries(variableObject).forEach(([key, value]) => {
-        clipText = clipText.replaceAll(new RegExp(key, "ig"), value);
+        clipText = clipText.replaceAll(
+          // 字符串后面跟着空格或者 ';'
+          new RegExp(`${key}(?=\s+|;$)`, "igm"),
+          value,
+        );
       });
 
       navigator.clipboard.writeText(clipText);
