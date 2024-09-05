@@ -1,16 +1,17 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.8
+// @version      0.0.9
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
-// @match        https://lanhuapp.com/*
+// @match        https://lanhuapp.com/web/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
 // @grant        GM_registerMenuCommand
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
 // @connect      gitlab.autosaver88.com
+// @connect      *
 // ==/UserScript==
 
 (function () {
