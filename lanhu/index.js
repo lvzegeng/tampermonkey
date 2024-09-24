@@ -12,6 +12,7 @@
 // @grant        GM_xmlhttpRequest
 // @connect      gitlab.autosaver88.com
 // @connect      *
+// @require      https://cdn.jsdelivr.net/npm/chroma-js@3.1.1/dist/chroma.min.cjs
 // ==/UserScript==
 
 (function () {
@@ -102,9 +103,13 @@
       const variableObject = await calcVariableObject(item);
 
       Object.entries(variableObject).forEach(([key, value]) => {
+        const isNumber = Number.parseFloat(key).toString() === key
+        // 将颜色值转换为设计稿的 #aaaaaa 结构
+        const nextKey = !isNumber && chroma.valid(key)? chroma(key).hex(): key
+
         clipText = clipText.replaceAll(
           // 字符串后面跟着空格或者 ';'
-          new RegExp(`${key}(?=\s+|;$)`, "igm"),
+          new RegExp(`${nextKey}(?=\s+|;$)`, "igm"),
           value,
         );
       });
