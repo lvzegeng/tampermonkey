@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
-// @version      0.0.9
+// @version      0.0.10
 // @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
 // @author       LZG
 // @match        https://lanhuapp.com/web/
@@ -35,6 +35,14 @@
     {
       name: "主题 home-m",
       url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/beta/template/home-m/src/assets/scss/variables.scss",
+    },
+    {
+      name: "主题 oedro",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/feature/oedro/template/oedro/src/assets/scss/variables.scss",
+    },
+    {
+      name: "主题 oedro-m",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/feature/oedro/template/oedro-m/src/assets/scss/variables.scss",
     },
   ];
 
