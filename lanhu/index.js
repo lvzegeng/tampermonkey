@@ -123,7 +123,8 @@
         );
       });
 
-      navigator.clipboard.writeText(clipText);
+      await navigator.clipboard.writeText(clipText);
+      alert("复制成功");
     };
 
     // 将 variable 转换为这样的结构
