@@ -2,7 +2,7 @@
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
 // @version      0.0.10
-// @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会以注释替换在后面
+// @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会打印在控制台；只替换 "蓝湖线" 注释前面的变量
 // @author       LZG
 // @match        https://lanhuapp.com/web/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
@@ -38,13 +38,18 @@
     },
     {
       name: "主题 oedro",
-      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/feature/oedro/template/oedro/src/assets/scss/variables.scss",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/oedro/template/oedro/src/assets/scss/variables.scss",
     },
     {
       name: "主题 oedro-m",
-      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/feature/oedro/template/oedro-m/src/assets/scss/variables.scss",
+      url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/oedro/template/oedro-m/src/assets/scss/variables.scss",
     },
   ];
+
+  const removeCSS = [
+      '\nfont-style: normal;',
+      "\ntext-transform: none;"
+  ]
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
@@ -111,8 +116,16 @@
       const variableObject = await calcVariableObject(item);
 
       // 蓝湖复制的 font-family 值有误，进行替换
-      const font = document.querySelectorAll('.layer_name')[1].textContent
-      clipText = clipText.replace(/font-family: .*/, `font-family: '${font}', sans-serif, arial;`)
+      if(clipText.includes('font-family')){
+        const font = document.querySelectorAll('.layer_name')[1].textContent
+        clipText = clipText.replace(/font-family: .*/, `font-family: '${font}', sans-serif, arial;`)
+      }
+
+      // 删除不需要的代码
+      for(const item of removeCSS){
+        clipText = clipText.replace(item, '')
+      }
+
 
       Object.entries(variableObject).forEach(([key, value]) => {
         const isNumber = Number.parseFloat(key).toString() === key;
@@ -152,6 +165,11 @@
           alert("请求主题文件异常");
           return;
         }
+      }
+
+      const lanhuIndex = variable.indexOf('蓝湖线')
+      if(lanhuIndex !== -1){
+        variable = variable.slice(0, lanhuIndex)
       }
 
       // 使用正则表达式去掉注释
