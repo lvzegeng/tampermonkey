@@ -46,10 +46,7 @@
     },
   ];
 
-  const removeCSS = [
-      '\nfont-style: normal;',
-      "\ntext-transform: none;"
-  ]
+  const removeCSS = ["\nfont-style: normal;", "\ntext-transform: none;"];
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
@@ -99,14 +96,14 @@
       const buttonEle = document.createElement("button");
       buttonEle.innerText = item.name;
       buttonEle.style.cssText = `background: ${colors[index % colors.length]}; padding: 5px 10px;`;
-      buttonEle.addEventListener("click", () => {
-        handleClick(item);
+      buttonEle.addEventListener("click", (event) => {
+        handleClick(item, event);
       });
       divEle.appendChild(buttonEle);
     });
     document.body.appendChild(divEle);
 
-    const handleClick = async (item) => {
+    const handleClick = async (item, event) => {
       if (!document.querySelector(copyBtnSelector)) {
         alert("请打开样式面板");
       }
@@ -116,16 +113,18 @@
       const variableObject = await calcVariableObject(item);
 
       // 蓝湖复制的 font-family 值有误，进行替换
-      if(clipText.includes('font-family')){
-        const font = document.querySelectorAll('.layer_name')[1].textContent
-        clipText = clipText.replace(/font-family: .*/, `font-family: '${font}', sans-serif, arial;`)
+      if (clipText.includes("font-family")) {
+        const font = document.querySelectorAll(".layer_name")[1].textContent;
+        clipText = clipText.replace(
+          /font-family: .*/,
+          `font-family: '${font}', sans-serif, arial;`,
+        );
       }
 
       // 删除不需要的代码
-      for(const item of removeCSS){
-        clipText = clipText.replace(item, '')
+      for (const item of removeCSS) {
+        clipText = clipText.replace(item, "");
       }
-
 
       Object.entries(variableObject).forEach(([key, value]) => {
         const isNumber = Number.parseFloat(key).toString() === key;
@@ -141,7 +140,12 @@
       });
 
       await navigator.clipboard.writeText(clipText);
-      alert("复制成功");
+
+      const { textContent } = event.target;
+      const joinIndex = textContent.indexOf("+");
+      const successNum =
+        Number(joinIndex === -1 ? "0" : textContent.slice(joinIndex)) + 1;
+      event.target.textContent = `${joinIndex === -1 ? textContent : textContent.slice(0, joinIndex)} +${successNum}`;
     };
 
     // 将 variable 转换为这样的结构
@@ -167,9 +171,9 @@
         }
       }
 
-      const lanhuIndex = variable.indexOf('蓝湖线')
-      if(lanhuIndex !== -1){
-        variable = variable.slice(0, lanhuIndex)
+      const lanhuIndex = variable.indexOf("蓝湖线");
+      if (lanhuIndex !== -1) {
+        variable = variable.slice(0, lanhuIndex);
       }
 
       // 使用正则表达式去掉注释
@@ -214,8 +218,8 @@
 
       const result = {};
       Object.entries(tempResult).map(([key, value]) => {
-        console.log(key, value)
-        result[key] =value[0]
+        console.log(key, value);
+        result[key] = value[0];
         // result[key] =
         //   value.length === 1
         //     ? value[0]
