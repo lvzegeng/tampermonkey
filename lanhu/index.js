@@ -110,6 +110,10 @@
       let clipText = await navigator.clipboard.readText();
       const variableObject = await calcVariableObject(item);
 
+      // 蓝湖复制的 font-family 值有误，进行替换
+      const font = document.querySelectorAll('.layer_name')[1].textContent
+      clipText = clipText.replace(/font-family: .*/, `font-family: '${font}', sans-serif, arial;`)
+
       Object.entries(variableObject).forEach(([key, value]) => {
         const isNumber = Number.parseFloat(key).toString() === key;
         // 将颜色值转换为设计稿的 #aaaaaa 结构
@@ -192,10 +196,12 @@
 
       const result = {};
       Object.entries(tempResult).map(([key, value]) => {
-        result[key] =
-          value.length === 1
-            ? value[0]
-            : `${value[0]} /* ${value.slice(1).join(", ")} */`;
+        console.log(key, value)
+        result[key] =value[0]
+        // result[key] =
+        //   value.length === 1
+        //     ? value[0]
+        //     : `${value[0]} /* ${value.slice(1).join(", ")} */`;
       });
 
       cacheMap.set(item, result);
