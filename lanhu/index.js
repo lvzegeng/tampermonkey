@@ -46,7 +46,11 @@
     },
   ];
 
-  const removeCSS = ["\nfont-style: normal;", "\ntext-transform: none;"];
+  const removeCSS = [
+    "text-align: left;",
+    "font-style: normal;",
+    "text-transform: none;",
+  ].map((item) => `\n${item}`);
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
@@ -114,10 +118,13 @@
 
       // 蓝湖复制的 font-family 值有误，进行替换
       if (clipText.includes("font-family")) {
-        const font = document.querySelectorAll(".layer_name")[1].textContent;
+        const fontLabelEle = Array.from(
+          document.querySelectorAll(".item_title"),
+        ).find((item) => item.textContent === "字体");
+        const fontValue = fontLabelEle.nextElementSibling.textContent;
         clipText = clipText.replace(
           /font-family: .*/,
-          `font-family: '${font}', sans-serif, arial;`,
+          `font-family: '${fontValue}', sans-serif, arial;`,
         );
       }
 
