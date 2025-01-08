@@ -50,6 +50,7 @@
     "text-align: left;",
     "font-style: normal;",
     "text-transform: none;",
+    "font-weight: .*;",
   ].map((item) => `\n${item}`);
 
   // 复制代码按钮元素
@@ -130,7 +131,7 @@
 
       // 删除不需要的代码
       for (const item of removeCSS) {
-        clipText = clipText.replace(item, "");
+        clipText = clipText.replace(new RegExp(item), "");
       }
 
       Object.entries(variableObject).forEach(([key, value]) => {
