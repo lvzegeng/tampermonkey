@@ -51,6 +51,8 @@
     "font-style: normal;",
     "text-transform: none;",
     "font-weight: .*;",
+    "width: .*;",
+    "height: .*;",
   ].map((item) => `\n${item}`);
 
   // 复制代码按钮元素
