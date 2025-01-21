@@ -53,7 +53,7 @@
     "font-weight: .*;",
     "width: .*;",
     "height: .*;",
-  ].map((item) => `\n${item}`);
+  ].map((item) => `\n?${item}`);
 
   // 复制代码按钮元素
   const copyBtnSelector = "#copy_code";
