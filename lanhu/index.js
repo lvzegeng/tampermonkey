@@ -2,7 +2,7 @@
 // @name         蓝湖替换CSS变量
 // @namespace    http://tampermonkey.net/
 // @version      0.0.10
-// @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会打印在控制台；只替换 "蓝湖线" 注释前面的变量
+// @description  支持 Css、Less、Sass 变量；不区分大小写；多个相同值的变量会打印在控制台
 // @author       LZG
 // @match        https://lanhuapp.com/web/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
@@ -44,6 +44,14 @@
       name: "主题 oedro-m",
       url: "https://gitlab.autosaver88.com/fe/sandwich-react/raw/oedro/template/oedro-m/src/assets/scss/variables.scss",
     },
+  ];
+
+  // 只提取指定变量，以是否作为开头匹配变量
+  const variableCss = [
+    "$ff",
+    "$mainColor",
+    "$mainColorHover",
+    "$themeColorHover",
   ];
 
   const removeCSS = [
@@ -181,19 +189,14 @@
         }
       }
 
-      const lanhuIndex = variable.indexOf("蓝湖线");
-      if (lanhuIndex !== -1) {
-        variable = variable.slice(0, lanhuIndex);
-      }
-
       // 使用正则表达式去掉注释
       const cleanedCode = variable
         .replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "")
         .trim();
 
-      const splitArr = cleanedCode
+      let splitArr = cleanedCode
         .split(";")
-        .slice(0, -1)
+        .filter((item) => item.length > 0)
         .map((item) => item.split(":").map((i) => i.trim()));
 
       // 将变量值为变量的替换为具体值，因为会有循环赋值变量所以必须从后替换
@@ -211,6 +214,10 @@
           item[1].startsWith("$"),
         );
       }
+
+      splitArr = splitArr.filter((item) =>
+        variableCss.some((i) => item[0].startsWith(i)),
+      );
 
       const tempResult = {};
       splitArr.forEach((item) => {
