@@ -49,9 +49,13 @@
   // 只提取指定变量，以是否作为开头匹配变量
   const variableCss = [
     "$ff",
-    "$mainColor",
-    "$mainColorHover",
-    "$themeColorHover",
+    "$font-color-w1",
+    "$font-color-w2",
+    "$font-color-w3",
+    "$font-color-w4",
+    "$subColor-f2",
+    "$subColor-f1",
+    "$ipt-error",
   ];
 
   const removeCSS = [
@@ -157,7 +161,7 @@
         );
       });
 
-      await navigator.clipboard.writeText(clipText);
+      await navigator.clipboard.writeText(clipText.trim());
 
       const { textContent } = event.target;
       const joinIndex = textContent.indexOf("+");
