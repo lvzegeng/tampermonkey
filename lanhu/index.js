@@ -197,27 +197,8 @@
       let splitArr = cleanedCode
         .split(";")
         .filter((item) => item.length > 0)
-        .map((item) => item.split(":").map((i) => i.trim()));
-
-      // 将变量值为变量的替换为具体值，因为会有循环赋值变量所以必须从后替换
-      let variableValueIndex = splitArr.findLastIndex((item) =>
-        item[1].startsWith("$"),
-      );
-      while (variableValueIndex !== -1) {
-        const variableIndex = splitArr.findIndex(
-          (item) => item[0] === splitArr[variableValueIndex][1],
-        );
-        if (variableIndex !== -1) {
-          splitArr[variableValueIndex][1] = splitArr[variableIndex][1];
-        }
-        variableValueIndex = splitArr.findLastIndex((item) =>
-          item[1].startsWith("$"),
-        );
-      }
-
-      splitArr = splitArr.filter((item) =>
-        variableCss.some((i) => item[0].startsWith(i)),
-      );
+        .map((item) => item.split(":").map((i) => i.trim()))
+        .filter((item) => variableCss.some((i) => item[0].startsWith(i)));
 
       const tempResult = {};
       splitArr.forEach((item) => {
